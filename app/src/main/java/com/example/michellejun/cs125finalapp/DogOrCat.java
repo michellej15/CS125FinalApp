@@ -10,4 +10,5 @@ public class DogOrCat extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dog_or_cat);
     }
+
 }
