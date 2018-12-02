@@ -130,9 +130,9 @@ public class DogOrCat extends AppCompatActivity {
                     }
                 }, new Response.ErrorListener() {
                     @Override
-                        public void onErrorResponse(final VolleyError error) {
-            Log.w(TAG, error.toString());
-        }
+                    public void onErrorResponse(final VolleyError error) {
+                        Log.w(TAG, error.toString());
+                    }
         });
     }
 }
