@@ -19,7 +19,9 @@
         android:id="@+id/get_endGame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="GAME OVER!" />
+        android:text="GAME OVER!"
+        android:textSize="30sp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/get_points"
