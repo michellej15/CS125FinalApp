@@ -1,6 +1,11 @@
 package com.example.michellejun.cs125finalapp;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
+import android.net.Uri;
 import android.nfc.Tag;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,6 +13,9 @@ import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -15,15 +23,21 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
@@ -38,8 +52,8 @@ public class DogOrCat extends AppCompatActivity {
     private static final String TOTAL_COUNT = "total_count";
     private static String TAG = "puppy";
     private static String TAG1 = "kitty";
-
-    JSONObject
+    public final String getDogImage= "https://cdn2.thedogapi.com/images/SyviZlqNm_640.jpg";
+    ImageButton imgButton;
 
     public void clickDog(View view) {
         if (dog == true) {
@@ -63,10 +77,12 @@ public class DogOrCat extends AppCompatActivity {
             winnerScore.putExtra(TOTAL_COUNT, endCount);
             startActivity(winnerScore);
         }
+        Log.d(TAG, "-----------------------------------call this API");
+        getDogAPI();
     }
 
 
-    public void clickCat(View view) {
+    public void clickCat(View viewCat) {
         TextView showCountTextView = (TextView) findViewById(R.id.getCat);
         String countString = showCountTextView.getText().toString();
         Integer count = Integer.parseInt(countString);
@@ -89,22 +105,35 @@ public class DogOrCat extends AppCompatActivity {
             startActivity(winnerScore);
         }
     }
+    private void goToUrl (View v) {
+        String url = "https://cdn2.thedogapi.com/images/SyviZlqNm_640.jpg";
+        Uri uriUrl = Uri.parse(url);
+        Intent launch = new Intent(Intent.ACTION_VIEW, uriUrl);
+        startActivity(launch);
+    }
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_dog_or_cat);
 
+        final ImageView button = findViewById(R.id.dogCatImage);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToUrl(v);
+            }
+        });
         final Button dogButton = findViewById(R.id.getDog);
         dogButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 clickDog(view);
             }
         });
+
         final Button catButton = findViewById(R.id.getCat);
         catButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                clickCat(view);
+            public void onClick(View viewCat) {
+                clickCat(viewCat);
             }
         });
     }
@@ -112,12 +141,15 @@ public class DogOrCat extends AppCompatActivity {
     public void getDogAPI() {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET,
-                "http://dog.ceo/api/breeds/list/all",
+                "https://api.thedogapi.com/v1/images/search?size=med&mime_types=jpg&format=json&has_breeds=true&order=RANDOM&page=0&limit=1",
                 null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(final JSONObject response) {
                         Log.d(TAG, response.toString());
+                        JsonParser parser = new JsonParser();
+                        JsonObject result = parser.parse("breed").getAsJsonObject();
+                        String dogURL = result.get("url").getAsString();
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -125,6 +157,7 @@ public class DogOrCat extends AppCompatActivity {
                 Log.w(TAG, error.toString());
             }
         });
+        jsonObjectRequest.getBody();
     }
 
     public void getCatAPI() {
@@ -136,6 +169,9 @@ public class DogOrCat extends AppCompatActivity {
                     @Override
                     public void onResponse(final JSONObject response) {
                         Log.d(TAG1, response.toString());
+                        /*JsonParser parser = new JsonParser();
+                        JSONObject result = parser.parse(response).getAsJsonObject();
+                        String catURL = response.get("url").getAsString();*/
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -173,6 +209,5 @@ public class DogOrCat extends AppCompatActivity {
         };
         queue.add(getRequest);
     }
-
 
 }

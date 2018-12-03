@@ -30,6 +30,8 @@
         android:id="@+id/dogCatImage"
         android:layout_width="wrap_content"
         android:layout_height="299dp"
+        android:adjustViewBounds="false"
+        android:onClick="goToUrl"
         tools:src="@tools:sample/backgrounds/scenic" />
 
     <Button
