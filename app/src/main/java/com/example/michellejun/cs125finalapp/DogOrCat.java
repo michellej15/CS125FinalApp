@@ -39,6 +39,8 @@ public class DogOrCat extends AppCompatActivity {
     private static String TAG = "puppy";
     private static String TAG1 = "kitty";
 
+    JSONObject
+
     public void clickDog(View view) {
         if (dog == true) {
             TextView showCountTextView = (TextView) findViewById(R.id.getDog);
@@ -172,5 +174,5 @@ public class DogOrCat extends AppCompatActivity {
         queue.add(getRequest);
     }
 
-    
+
 }
