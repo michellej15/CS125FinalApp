@@ -221,4 +221,5 @@ public class DogOrCat extends AppCompatActivity {
             imageView.setImageBitmap(result);
         }
     }
+
 }
