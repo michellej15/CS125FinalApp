@@ -54,7 +54,8 @@ public class DogOrCat extends AppCompatActivity {
     private static final String TOTAL_COUNT = "total_count";
     private static String TAG = "puppy";
     private static String TAG1 = "kitty";
-    public final String getDogImage= "https://cdn2.thedogapi.com/images/SyviZlqNm_640.jpg";
+    public final String getDogImage = "https://cdn2.thedogapi.com/images/SyviZlqNm_640.jpg";
+    public final String getCatImage = "https://api.thecatapi.com/v1/images/search";
 
     public void clickDog(View view) {
         if (dog == true) {
@@ -160,9 +161,9 @@ public class DogOrCat extends AppCompatActivity {
                     @Override
                     public void onResponse(final JSONObject response) {
                         Log.d(TAG1, response.toString());
-                        /*JsonParser parser = new JsonParser();
-                        JSONObject result = parser.parse(response).getAsJsonObject();
-                        String catURL = response.get("url").getAsString();*/
+                        JsonParser parser = new JsonParser();
+                        JSONObject catResult = parser.parse(response).getAsJsonObject();
+                        String catURL = catResult.get("url").getAsString();
                     }
                 }, new Response.ErrorListener() {
             @Override
