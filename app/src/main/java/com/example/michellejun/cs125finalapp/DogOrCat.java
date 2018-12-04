@@ -43,6 +43,8 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.os.AsyncTask;
+
 public class DogOrCat extends AppCompatActivity {
 
     boolean dog = false;
@@ -53,7 +55,6 @@ public class DogOrCat extends AppCompatActivity {
     private static String TAG = "puppy";
     private static String TAG1 = "kitty";
     public final String getDogImage= "https://cdn2.thedogapi.com/images/SyviZlqNm_640.jpg";
-    ImageButton imgButton;
 
     public void clickDog(View view) {
         if (dog == true) {
@@ -83,10 +84,10 @@ public class DogOrCat extends AppCompatActivity {
 
 
     public void clickCat(View viewCat) {
-        TextView showCountTextView = (TextView) findViewById(R.id.getCat);
-        String countString = showCountTextView.getText().toString();
-        Integer count = Integer.parseInt(countString);
         if (cat == true) {
+            TextView showCountTextView = (TextView) findViewById(R.id.getCat);
+            String countString = showCountTextView.getText().toString();
+            Integer count = Integer.parseInt(countString);
             count++;
             timer = 3;
             showCountTextView.setText(count.toString());
@@ -104,36 +105,26 @@ public class DogOrCat extends AppCompatActivity {
             winnerScore.putExtra(TOTAL_COUNT, endCount);
             startActivity(winnerScore);
         }
-    }
-    private void goToUrl (View v) {
-        String url = "https://cdn2.thedogapi.com/images/SyviZlqNm_640.jpg";
-        Uri uriUrl = Uri.parse(url);
-        Intent launch = new Intent(Intent.ACTION_VIEW, uriUrl);
-        startActivity(launch);
+        getCatAPI();
     }
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dog_or_cat);
 
-        final ImageView button = findViewById(R.id.dogCatImage);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goToUrl(v);
-            }
-        });
+        new ImageDownload((ImageView) findViewById(R.id.dogCatImage)).execute(getDogImage);
+
         final Button dogButton = findViewById(R.id.getDog);
+        final Button catButton = findViewById(R.id.getCat);
         dogButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 clickDog(view);
             }
         });
-
-        final Button catButton = findViewById(R.id.getCat);
         catButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View viewCat) {
-                clickCat(viewCat);
+            public void onClick(View view) {
+                clickCat(view);
             }
         });
     }
@@ -209,5 +200,25 @@ public class DogOrCat extends AppCompatActivity {
         };
         queue.add(getRequest);
     }
+    private class ImageDownload extends AsyncTask<String,Void,Bitmap> {
+        ImageView imageView;
 
+        public ImageDownload(ImageView imageView) {
+            this.imageView = imageView;
+        }
+        protected Bitmap doInBackground(String...urls) {
+            String urlOfImage = urls[0];
+            Bitmap logo = null;
+            try {
+                InputStream is = new URL(urlOfImage).openStream();
+                logo = BitmapFactory.decodeStream(is);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return logo;
+        }
+        protected void onPostExecute (Bitmap result) {
+            imageView.setImageBitmap(result);
+        }
+    }
 }
