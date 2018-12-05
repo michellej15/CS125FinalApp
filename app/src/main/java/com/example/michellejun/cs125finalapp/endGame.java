@@ -1,14 +1,20 @@
 package com.example.michellejun.cs125finalapp;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Random;
 
 public class endGame extends DogOrCat {
@@ -25,6 +31,9 @@ public class endGame extends DogOrCat {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_end_game);
+
+        new ImageDownload((ImageView) findViewById(R.id.get_doggy)).execute("https://i.imgur.com/JgK9z4Q.jpg");
+
         getCount();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -37,6 +46,27 @@ public class endGame extends DogOrCat {
                         .setAction("Action", null).show();
             }
         });
+    }
+    private class ImageDownload extends AsyncTask<String,Void,Bitmap> {
+        ImageView imageView;
+
+        public ImageDownload(ImageView imageView) {
+            this.imageView = imageView;
+        }
+        protected Bitmap doInBackground(String...urls) {
+            String urlOfImage = urls[0];
+            Bitmap logo = null;
+            try {
+                InputStream is = new URL(urlOfImage).openStream();
+                logo = BitmapFactory.decodeStream(is);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return logo;
+        }
+        protected void onPostExecute (Bitmap result) {
+            imageView.setImageBitmap(result);
+        }
     }
 
 }

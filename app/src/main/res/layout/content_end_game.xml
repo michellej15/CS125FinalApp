@@ -10,7 +10,7 @@
     tools:showIn="@layout/activity_end_game">
 
     <ImageButton
-        android:id="@+id/get_doogy"
+        android:id="@+id/get_doggy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:srcCompat="@tools:sample/avatars" />
