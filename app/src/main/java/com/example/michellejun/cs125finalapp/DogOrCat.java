@@ -48,7 +48,7 @@ import java.util.Random;
 
 import android.os.AsyncTask;
 
-public class DogOrCat extends AppCompatActivity implements CountDownTimer {
+public class DogOrCat extends AppCompatActivity {
 
     boolean dog = false;
     boolean cat = false;
@@ -127,17 +127,20 @@ public class DogOrCat extends AppCompatActivity implements CountDownTimer {
         setContentView(R.layout.activity_dog_or_cat);
 
         new ImageDownload((ImageView) findViewById(R.id.dogCatImage)).execute(getDogOrCatImage());
+        final ProgressBar progressBar = findViewById(R.id.progressBar);
 
         final Button dogButton = findViewById(R.id.getDog);
         final Button catButton = findViewById(R.id.getCat);
         dogButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 clickDog(view);
+                progressBar.setVisibility(View.VISIBLE);
             }
         });
         catButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 clickCat(view);
+                progressBar.setVisibility(View.VISIBLE);
             }
         });
     }
