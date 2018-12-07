@@ -26,13 +26,16 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -57,10 +60,10 @@ public class DogOrCat extends AppCompatActivity {
     private static final String TOTAL_COUNT = "total_count";
     private static String TAG = "puppy";
     private static String TAG1 = "kitty";
-    public static final String getDogImage = "https://api.thedogapi.com/v1/images/search?size=med&mime_types=jpg&format=json&has_breeds=true&order=RANDOM&page=0&limit=1";
-    public static final String getCatImage = "https://api.thecatapi.com/v1/images/search";
-    public static final String[] dogAndCatUrl = {getDogImage, getCatImage};
+    public static final String[] dogAndCatUrl = {, kittyURL};
     ProgressBar progressBar;
+    private static RequestQueue requestQueue;
+    final ImageView imageView = (ImageView) findViewById(R.id.dogCatImage);
 
     public void clickDog(View view) {
         if (dog == true) {
@@ -146,17 +149,22 @@ public class DogOrCat extends AppCompatActivity {
     }
 
     public void getDogAPI() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+        final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 "https://api.thedogapi.com/v1/images/search?size=med&mime_types=jpg&format=json&has_breeds=true&order=RANDOM&page=0&limit=1",
                 null,
-                new Response.Listener<JSONObject>() {
+                new Response.Listener<JSONArray>() {
                     @Override
-                    public void onResponse(final JSONObject response) {
-                        Log.d(TAG, response.toString());
-                        JsonParser parser = new JsonParser();
-                        JsonObject result = parser.parse("url").getAsJsonObject();
-                        String dogURL = result.get("url").getAsString();
+                    public void onResponse(final JSONArray response) {
+                        try {
+                            Log.d(TAG, response.getJSONObject(0).toString());
+                            JSONObject dogURL = response.getJSONObject(0);
+                            String doggyURL = dogURL.getString("url");
+                            imageView.setImageResource();
+                        }
+                        catch (JSONException e){
+                            e.printStackTrace();
+                        }
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -164,28 +172,33 @@ public class DogOrCat extends AppCompatActivity {
                 Log.w(TAG, error.toString());
             }
         });
-        jsonObjectRequest.getBody();
+        requestQueue.add(jsonArrayRequest);
     }
 
     public void getCatAPI() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 "https://api.thecatapi.com/v1/images/search",
                 null,
-                new Response.Listener<JSONObject>() {
+                new Response.Listener<JSONArray>() {
                     @Override
-                    public void onResponse(final JSONObject response) {
-                        Log.d(TAG1, response.toString());
-                        /*JsonParser parser = new JsonParser();
-                        JSONObject catResult = parser.parse(response).getAsJsonObject();
-                        String catURL = catResult.get("url").getAsString();*/
+                    public void onResponse(final JSONArray response) {
+                        try {
+                            Log.d(TAG, response.getJSONObject(0).toString());
+                            JSONObject catURL = response.getJSONObject(0);
+                            String kittyURL = catURL.getString("url");
+                        }
+                        catch (JSONException e){
+                            e.printStackTrace();
+                        }
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(final VolleyError error) {
-                Log.w(TAG1, error.toString());
+                Log.w(TAG, error.toString());
             }
         });
+        requestQueue.add(jsonArrayRequest);
     }
 
     public void requestWithSomeHttpHeaders() {
