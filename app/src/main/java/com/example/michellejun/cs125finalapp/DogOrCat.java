@@ -60,7 +60,7 @@ public class DogOrCat extends AppCompatActivity {
     private static final String TOTAL_COUNT = "total_count";
     private static String TAG = "puppy";
     private static String TAG1 = "kitty";
-    public static final String[] dogAndCatUrl = {, kittyURL};
+    public static final String[] dogAndCatUrl = {};
     ProgressBar progressBar;
     private static RequestQueue requestQueue;
     final ImageView imageView = (ImageView) findViewById(R.id.dogCatImage);
@@ -147,7 +147,7 @@ public class DogOrCat extends AppCompatActivity {
             }
         });
     }
-
+    
     public void getDogAPI() {
         final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
