@@ -65,6 +65,9 @@ public class DogOrCat extends AppCompatActivity {
     final ImageView imageView = (ImageView) findViewById(R.id.dogCatImage);
     static String dogUrl = "https://api.thedogapi.com/v1/images/search?size=med&mime_types=jpg&format=json&has_breeds=true&order=RANDOM&page=0&limit=1";
     static String catUrl = "https://api.thecatapi.com/v1/images/search";
+    ProgressBar progressBar;
+    CountDownTimer countDownTimer;
+    int i = 0;
 
 
     public void clickDog(View view) {
@@ -73,12 +76,9 @@ public class DogOrCat extends AppCompatActivity {
             String countString = showCountTextView.getText().toString();
             Integer count = Integer.parseInt(countString);
             count++;
-            timer = 3;
             showCountTextView.setText(count.toString());
             getDogOrCatImage();
-        }
-        if (timer == 0) {
-            endGame = true;
+            progressTime();
         } else {
             endGame = true;
         }
@@ -99,12 +99,9 @@ public class DogOrCat extends AppCompatActivity {
             String countString = showCountTextView.getText().toString();
             Integer count = Integer.parseInt(countString);
             count++;
-            timer = 3;
             showCountTextView.setText(count.toString());
             getDogOrCatImage();
-        }
-        if (timer == 0) {
-            endGame = true;
+            progressTime();
         } else {
             endGame = true;
         }
@@ -291,4 +288,22 @@ public class DogOrCat extends AppCompatActivity {
         }
     }
 
+    public void progressTime() {
+        progressBar = (ProgressBar) findViewById(R.id.progress_view);
+        progressBar.setProgress(i);
+            countDownTimer = new CountDownTimer(3000, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    i++;
+                    progressBar.setProgress((int)i * 100 / (3000 / 1000));
+                }
+
+                @Override
+                public void onFinish() {
+                    finish();
+                    endGame = true;
+                }
+            };
+            countDownTimer.start();
+    }
 }
