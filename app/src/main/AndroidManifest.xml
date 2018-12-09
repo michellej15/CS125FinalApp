@@ -22,6 +22,10 @@
             android:name=".endGame"
             android:label="@string/title_activity_end_game"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".start_game"
+            android:label="@string/title_activity_start_game"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

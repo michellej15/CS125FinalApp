@@ -10,31 +10,33 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Random;
 
-public class endGame extends DogOrCat {
-    private static final String TOTAL_COUNT = "total_count";
-
-    public void getCount() {
-        TextView gameOver = (TextView) findViewById(R.id.get_endGame);
-        TextView countView = (TextView) findViewById(R.id.get_points);
-        int count = getIntent().getIntExtra(TOTAL_COUNT, 0);
-        countView.setText(Integer.toString(count));
+public class start_game extends DogOrCat {
+    public void clickStart(View view) {
+        Intent beginGame = new Intent(this, DogOrCat.class);
+        startActivity(beginGame);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_end_game);
+        setContentView(R.layout.activity_start_game);
 
-        new ImageDownload((ImageView) findViewById(R.id.get_doggy)).execute("https://i.imgur.com/JgK9z4Q.jpg");
+        new ImageDownload((ImageView) findViewById(R.id.homepage_image)).execute("https://amp.businessinsider.com/images/536aa78069bedddb13c60c3a-750-514.jpg");
 
-        getCount();
+        final Button startButton = findViewById(R.id.start_button);
+        startButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                clickStart(view);
+                getDogOrCatImage();
+            }
+        });
+
     }
 
     private class ImageDownload extends AsyncTask<String,Void,Bitmap> {

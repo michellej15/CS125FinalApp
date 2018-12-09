@@ -188,7 +188,7 @@ public class DogOrCat extends AppCompatActivity {
                     @Override
                     public void onResponse(final JSONArray response) {
                         try {
-                            Log.d(TAG, response.getJSONObject(0).toString());
+                            Log.d(TAG1, response.getJSONObject(0).toString());
                         }
                         catch (JSONException e){
                             e.printStackTrace();
@@ -197,7 +197,7 @@ public class DogOrCat extends AppCompatActivity {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(final VolleyError error) {
-                Log.w(TAG, error.toString());
+                Log.w(TAG1, error.toString());
             }
         });
         requestQueue.add(jsonArrayRequest);
