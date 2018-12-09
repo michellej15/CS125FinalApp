@@ -31,6 +31,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -60,10 +61,11 @@ public class DogOrCat extends AppCompatActivity {
     private static final String TOTAL_COUNT = "total_count";
     private static String TAG = "puppy";
     private static String TAG1 = "kitty";
-    public static final String[] dogAndCatUrl = {};
-    ProgressBar progressBar;
     private static RequestQueue requestQueue;
     final ImageView imageView = (ImageView) findViewById(R.id.dogCatImage);
+    static String dogUrl = "https://api.thedogapi.com/v1/images/search?size=med&mime_types=jpg&format=json&has_breeds=true&order=RANDOM&page=0&limit=1";
+    static String catUrl = "https://api.thecatapi.com/v1/images/search";
+
 
     public void clickDog(View view) {
         if (dog == true) {
@@ -88,7 +90,6 @@ public class DogOrCat extends AppCompatActivity {
             winnerScore.putExtra(TOTAL_COUNT, endCount);
             startActivity(winnerScore);
         }
-        getDogAPI();
     }
 
 
@@ -115,12 +116,17 @@ public class DogOrCat extends AppCompatActivity {
             winnerScore.putExtra(TOTAL_COUNT, endCount);
             startActivity(winnerScore);
         }
-        getCatAPI();
     }
 
     public String getDogOrCatImage() {
         Random random = new Random();
         String randomString = dogAndCatUrl[random.nextInt(dogAndCatUrl.length)];
+        if (randomString.equals(catImage)) {
+            cat = true;
+        }
+        if (randomString.equals(dogImage)) {
+            dog = true;
+        }
         return randomString;
     }
 
@@ -130,24 +136,22 @@ public class DogOrCat extends AppCompatActivity {
         setContentView(R.layout.activity_dog_or_cat);
 
         new ImageDownload((ImageView) findViewById(R.id.dogCatImage)).execute(getDogOrCatImage());
-        final ProgressBar progressBar = findViewById(R.id.progressBar);
+        final ProgressBar progressBar = findViewById(R.id.progress_view);
 
         final Button dogButton = findViewById(R.id.getDog);
         final Button catButton = findViewById(R.id.getCat);
         dogButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 clickDog(view);
-                progressBar.setVisibility(View.VISIBLE);
             }
         });
         catButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 clickCat(view);
-                progressBar.setVisibility(View.VISIBLE);
             }
         });
     }
-    
+
     public void getDogAPI() {
         final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
@@ -158,9 +162,9 @@ public class DogOrCat extends AppCompatActivity {
                     public void onResponse(final JSONArray response) {
                         try {
                             Log.d(TAG, response.getJSONObject(0).toString());
-                            JSONObject dogURL = response.getJSONObject(0);
-                            String doggyURL = dogURL.getString("url");
-                            imageView.setImageResource();
+                            /*JSONObject dogURL = response.getJSONObject(0);
+                            String dogPic = dogURL.getString("url");*/
+
                         }
                         catch (JSONException e){
                             e.printStackTrace();
@@ -185,8 +189,6 @@ public class DogOrCat extends AppCompatActivity {
                     public void onResponse(final JSONArray response) {
                         try {
                             Log.d(TAG, response.getJSONObject(0).toString());
-                            JSONObject catURL = response.getJSONObject(0);
-                            String kittyURL = catURL.getString("url");
                         }
                         catch (JSONException e){
                             e.printStackTrace();
@@ -257,6 +259,16 @@ public class DogOrCat extends AppCompatActivity {
         queue.add(getRequest);
     }
 
+    static JsonParser parser = new JsonParser();
+    static JsonObject dogResult = parser.parse(dogUrl).getAsJsonObject();
+    static String dogImage = dogResult.get("url").getAsString();
+
+    static JsonObject catResult = parser.parse(catUrl).getAsJsonObject();
+    static String catImage = catResult.get("url").getAsString();
+
+    public static final String[] dogAndCatUrl = {dogImage, catImage};
+
+
     private class ImageDownload extends AsyncTask<String,Void,Bitmap> {
         ImageView imageView;
 
@@ -279,16 +291,4 @@ public class DogOrCat extends AppCompatActivity {
         }
     }
 
-    CountDownTimer countDownTimer = new CountDownTimer(60 * 1000, 1000) {
-        @Override
-        public void onTick(long millisUntilFinished) {
-            int progress = (int) (millisUntilFinished / 1000);
-            progressBar.setProgress(progressBar.getMax() - progress);
-        }
-
-        @Override
-        public void onFinish() {
-            finish();
-        }
-    };
 }
