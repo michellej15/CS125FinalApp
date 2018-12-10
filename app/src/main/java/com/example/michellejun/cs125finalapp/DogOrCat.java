@@ -200,12 +200,12 @@ public class DogOrCat extends AppCompatActivity {
         });
         requestQueue.add(jsonArrayRequest);
     }
-
+    //ask if since the button method is void, if the image will still update
     public void clickDog(View view) {
         if (dog == true) {
             JsonParser parser = new JsonParser();
             JsonObject dogResult = parser.parse(dogUrl).getAsJsonObject();
-            String dogImage = dogResult.get("url").getAsString();
+            dogImage = dogResult.get("url").getAsString();
 
             TextView showCountTextView = (TextView) findViewById(R.id.getDog);
             String countString = showCountTextView.getText().toString();
@@ -231,8 +231,8 @@ public class DogOrCat extends AppCompatActivity {
         if (cat == true) {
             JsonParser parser = new JsonParser();
             JsonObject catResult = parser.parse(catUrl).getAsJsonObject();
-            String catImage = catResult.get("url").getAsString();
-
+            catImage = catResult.get("url").getAsString();
+            //is string linked to imageView?
             TextView showCountTextView = (TextView) findViewById(R.id.getCat);
             String countString = showCountTextView.getText().toString();
             Integer count = Integer.parseInt(countString);
@@ -253,7 +253,7 @@ public class DogOrCat extends AppCompatActivity {
         }
     }
 
-    public static final String[] dogAndCatUrl = {dogUrl, catUrl};
+    public final String[] dogAndCatUrl = {dogImage, catImage};
 
     public String getDogOrCatImage() {
         Random random = new Random();
