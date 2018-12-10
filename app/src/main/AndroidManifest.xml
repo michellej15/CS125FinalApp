@@ -11,7 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DogOrCat">
+        <activity android:name=".start_game">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,12 +19,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".endGame"
-            android:label="@string/title_activity_end_game"
+            android:name=".DogOrCat"
+            android:label="@string/title_activity_start_game"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".start_game"
-            android:label="@string/title_activity_start_game"
+            android:name=".end_game"
+            android:label="@string/title_activity_end_game"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

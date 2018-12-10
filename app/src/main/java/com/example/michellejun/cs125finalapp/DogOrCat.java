@@ -56,29 +56,28 @@ public class DogOrCat extends AppCompatActivity {
 
     boolean dog = false;
     boolean cat = false;
-    int timer = 3;
     boolean endGame = false;
     private static final String TOTAL_COUNT = "total_count";
     private static String TAG = "puppy";
     private static String TAG1 = "kitty";
     private static RequestQueue requestQueue;
-    final ImageView imageView = (ImageView) findViewById(R.id.dogCatImage);
     static String dogUrl = "https://api.thedogapi.com/v1/images/search?size=med&mime_types=jpg&format=json&has_breeds=true&order=RANDOM&page=0&limit=1";
     static String catUrl = "https://api.thecatapi.com/v1/images/search";
     ProgressBar progressBar;
     CountDownTimer countDownTimer;
     int i = 0;
-    String catImage;
-    String dogImage;
-    JSONObject dogURL;
-    JSONObject catURL;
+    String dogURL;
+    String catURL;
+    ImageView imageView;
+    String randomString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dog_or_cat);
 
-        new ImageDownload((ImageView) findViewById(R.id.dogCatImage)).execute(getDogOrCatImage());
+        imageView = (ImageView) findViewById(R.id.dogCatImage);
+        new ImageDownload((ImageView) findViewById(R.id.dogCatImage)).execute(randomString);
         final ProgressBar progressBar = findViewById(R.id.progress_view);
 
         final Button dogButton = findViewById(R.id.getDog);
@@ -130,7 +129,7 @@ public class DogOrCat extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("catPic", response);
+                        Log.d("dogPic", response);
                     }
                 },
                 new Response.ErrorListener() {
@@ -161,7 +160,9 @@ public class DogOrCat extends AppCompatActivity {
                     public void onResponse(final JSONArray response) {
                         try {
                             Log.d(TAG, response.getJSONObject(0).toString());
-                            dogURL = response.getJSONObject(0);
+                            JSONObject dogResponse = response.getJSONObject(0);
+                            dogURL = dogResponse.getString("url");
+                            new ImageDownload(imageView).execute(dogURL);
                         }
                         catch (JSONException e){
                             e.printStackTrace();
@@ -186,7 +187,10 @@ public class DogOrCat extends AppCompatActivity {
                     public void onResponse(final JSONArray response) {
                         try {
                             Log.d(TAG1, response.getJSONObject(0).toString());
-                            catURL = response.getJSONObject(0);
+                            JSONObject catResponse = response.getJSONObject(0);
+                            catURL = catResponse.getString("url");
+                            new ImageDownload(imageView).execute(catURL);
+
                         }
                         catch (JSONException e){
                             e.printStackTrace();
@@ -200,11 +204,12 @@ public class DogOrCat extends AppCompatActivity {
         });
         requestQueue.add(jsonArrayRequest);
     }
+
     public void clickDog(View view) {
         if (dog == true) {
-            JsonParser parser = new JsonParser();
+            /*JsonParser parser = new JsonParser();
             JsonObject dogResult = parser.parse(dogUrl).getAsJsonObject();
-            dogImage = dogResult.get("url").getAsString();
+            dogImage = dogResult.get("url").getAsString();*/
 
             TextView showCountTextView = (TextView) findViewById(R.id.getDog);
             String countString = showCountTextView.getText().toString();
@@ -217,7 +222,7 @@ public class DogOrCat extends AppCompatActivity {
             endGame = true;
         }
         if (endGame == true) {
-            Intent winnerScore = new Intent(this, endGame.class);
+            Intent winnerScore = new Intent(this, end_game.class);
             TextView showCountText = (TextView) findViewById(R.id.get_score);
             String countStringEnd = showCountText.getText().toString();
             int endCount = Integer.parseInt(countStringEnd);
@@ -228,10 +233,10 @@ public class DogOrCat extends AppCompatActivity {
 
     public void clickCat(View viewCat) {
         if (cat == true) {
-            JsonParser parser = new JsonParser();
+            /*JsonParser parser = new JsonParser();
             JsonObject catResult = parser.parse(catUrl).getAsJsonObject();
-            catImage = catResult.get("url").getAsString();
-            //is string linked to imageView?
+            catImage = catResult.get("url").getAsString();*/
+
             TextView showCountTextView = (TextView) findViewById(R.id.getCat);
             String countString = showCountTextView.getText().toString();
             Integer count = Integer.parseInt(countString);
@@ -243,7 +248,7 @@ public class DogOrCat extends AppCompatActivity {
             endGame = true;
         }
         if (endGame == true) {
-            Intent winnerScore = new Intent(this, endGame.class);
+            Intent winnerScore = new Intent(this, end_game.class);
             TextView showCountText = (TextView) findViewById(R.id.get_score);
             String countStringEnd = showCountText.getText().toString();
             int endCount = Integer.parseInt(countStringEnd);
@@ -253,14 +258,14 @@ public class DogOrCat extends AppCompatActivity {
     }
 
     public String getDogOrCatImage() {
-        final String[] dogAndCatUrl = {dogImage, catImage};
+        final String[] dogAndCatUrl = {dogURL, catURL};
 
         Random random = new Random();
-        String randomString = dogAndCatUrl[random.nextInt(dogAndCatUrl.length)];
-        if (randomString.equals(catImage)) {
+        randomString = dogAndCatUrl[random.nextInt(dogAndCatUrl.length)];
+        if (randomString.equals(catURL)) {
             cat = true;
         }
-        if (randomString.equals(dogImage)) {
+        if (randomString.equals(dogURL)) {
             dog = true;
         }
         return randomString;

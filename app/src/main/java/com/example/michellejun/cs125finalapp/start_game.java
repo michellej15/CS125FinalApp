@@ -16,7 +16,7 @@ import android.widget.ImageView;
 import java.io.InputStream;
 import java.net.URL;
 
-public class start_game extends DogOrCat {
+public class start_game extends AppCompatActivity{
     public void clickStart(View view) {
         Intent beginGame = new Intent(this, DogOrCat.class);
         startActivity(beginGame);
@@ -33,10 +33,8 @@ public class start_game extends DogOrCat {
         startButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 clickStart(view);
-                getDogOrCatImage();
             }
         });
-
     }
 
     private class ImageDownload extends AsyncTask<String,Void,Bitmap> {

@@ -1,6 +1,5 @@
 package com.example.michellejun.cs125finalapp;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -15,9 +14,9 @@ import android.widget.TextView;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Random;
 
-public class endGame extends DogOrCat {
+public class end_game extends DogOrCat {
+
     private static final String TOTAL_COUNT = "total_count";
 
     public void getCount() {
@@ -30,7 +29,7 @@ public class endGame extends DogOrCat {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_end_game);
+        setContentView(R.layout.activity_end_game2);
 
         new ImageDownload((ImageView) findViewById(R.id.get_doggy)).execute("https://i.imgur.com/JgK9z4Q.jpg");
 
@@ -60,3 +59,4 @@ public class endGame extends DogOrCat {
     }
 
 }
+
