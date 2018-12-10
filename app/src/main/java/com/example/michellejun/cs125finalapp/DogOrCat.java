@@ -68,64 +68,10 @@ public class DogOrCat extends AppCompatActivity {
     ProgressBar progressBar;
     CountDownTimer countDownTimer;
     int i = 0;
-
-
-    public void clickDog(View view) {
-        if (dog == true) {
-            TextView showCountTextView = (TextView) findViewById(R.id.getDog);
-            String countString = showCountTextView.getText().toString();
-            Integer count = Integer.parseInt(countString);
-            count++;
-            showCountTextView.setText(count.toString());
-            getDogOrCatImage();
-            progressTime();
-        } else {
-            endGame = true;
-        }
-        if (endGame == true) {
-            Intent winnerScore = new Intent(this, endGame.class);
-            TextView showCountText = (TextView) findViewById(R.id.get_score);
-            String countStringEnd = showCountText.getText().toString();
-            int endCount = Integer.parseInt(countStringEnd);
-            winnerScore.putExtra(TOTAL_COUNT, endCount);
-            startActivity(winnerScore);
-        }
-    }
-
-
-    public void clickCat(View viewCat) {
-        if (cat == true) {
-            TextView showCountTextView = (TextView) findViewById(R.id.getCat);
-            String countString = showCountTextView.getText().toString();
-            Integer count = Integer.parseInt(countString);
-            count++;
-            showCountTextView.setText(count.toString());
-            getDogOrCatImage();
-            progressTime();
-        } else {
-            endGame = true;
-        }
-        if (endGame == true) {
-            Intent winnerScore = new Intent(this, endGame.class);
-            TextView showCountText = (TextView) findViewById(R.id.get_score);
-            String countStringEnd = showCountText.getText().toString();
-            int endCount = Integer.parseInt(countStringEnd);
-            winnerScore.putExtra(TOTAL_COUNT, endCount);
-            startActivity(winnerScore);
-        }
-    }
-
-    public String getDogOrCatImage() {
-        Random random = new Random();
-        String randomString = dogAndCatUrl[random.nextInt(dogAndCatUrl.length)];
-        if (randomString.equals(catImage)) {
-            cat = true;
-        }
-        if (randomString.equals(dogImage)) {
-            dog = true;
-        }
-        return randomString;
-    }
+    String catImage;
+    String dogImage;
+    JSONObject dogURL;
+    JSONObject catURL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,57 +93,6 @@ public class DogOrCat extends AppCompatActivity {
                 clickCat(view);
             }
         });
-    }
-
-    public void getDogAPI() {
-        final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-                Request.Method.GET,
-                "https://api.thedogapi.com/v1/images/search?size=med&mime_types=jpg&format=json&has_breeds=true&order=RANDOM&page=0&limit=1",
-                null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(final JSONArray response) {
-                        try {
-                            Log.d(TAG, response.getJSONObject(0).toString());
-                            /*JSONObject dogURL = response.getJSONObject(0);
-                            String dogPic = dogURL.getString("url");*/
-
-                        }
-                        catch (JSONException e){
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(final VolleyError error) {
-                Log.w(TAG, error.toString());
-            }
-        });
-        requestQueue.add(jsonArrayRequest);
-    }
-
-    public void getCatAPI() {
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-                Request.Method.GET,
-                "https://api.thecatapi.com/v1/images/search",
-                null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(final JSONArray response) {
-                        try {
-                            Log.d(TAG1, response.getJSONObject(0).toString());
-                        }
-                        catch (JSONException e){
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(final VolleyError error) {
-                Log.w(TAG1, error.toString());
-            }
-        });
-        requestQueue.add(jsonArrayRequest);
     }
 
     public void requestWithSomeHttpHeaders() {
@@ -256,14 +151,121 @@ public class DogOrCat extends AppCompatActivity {
         queue.add(getRequest);
     }
 
-    static JsonParser parser = new JsonParser();
-    static JsonObject dogResult = parser.parse(dogUrl).getAsJsonObject();
-    static String dogImage = dogResult.get("url").getAsString();
+    public void getDogAPI() {
+        final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                "https://api.thedogapi.com/v1/images/search?size=med&mime_types=jpg&format=json&has_breeds=true&order=RANDOM&page=0&limit=1",
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(final JSONArray response) {
+                        try {
+                            Log.d(TAG, response.getJSONObject(0).toString());
+                            dogURL = response.getJSONObject(0);
+                        }
+                        catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(final VolleyError error) {
+                Log.w(TAG, error.toString());
+            }
+        });
+        requestQueue.add(jsonArrayRequest);
+    }
 
-    static JsonObject catResult = parser.parse(catUrl).getAsJsonObject();
-    static String catImage = catResult.get("url").getAsString();
+    public void getCatAPI() {
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                "https://api.thecatapi.com/v1/images/search",
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(final JSONArray response) {
+                        try {
+                            Log.d(TAG1, response.getJSONObject(0).toString());
+                            catURL = response.getJSONObject(0);
+                        }
+                        catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(final VolleyError error) {
+                Log.w(TAG1, error.toString());
+            }
+        });
+        requestQueue.add(jsonArrayRequest);
+    }
 
-    public static final String[] dogAndCatUrl = {dogImage, catImage};
+    public void clickDog(View view) {
+        if (dog == true) {
+            JsonParser parser = new JsonParser();
+            JsonObject dogResult = parser.parse(dogUrl).getAsJsonObject();
+            String dogImage = dogResult.get("url").getAsString();
+
+            TextView showCountTextView = (TextView) findViewById(R.id.getDog);
+            String countString = showCountTextView.getText().toString();
+            Integer count = Integer.parseInt(countString);
+            count++;
+            showCountTextView.setText(count.toString());
+            getDogOrCatImage();
+            progressTime();
+        } else {
+            endGame = true;
+        }
+        if (endGame == true) {
+            Intent winnerScore = new Intent(this, endGame.class);
+            TextView showCountText = (TextView) findViewById(R.id.get_score);
+            String countStringEnd = showCountText.getText().toString();
+            int endCount = Integer.parseInt(countStringEnd);
+            winnerScore.putExtra(TOTAL_COUNT, endCount);
+            startActivity(winnerScore);
+        }
+    }
+
+    public void clickCat(View viewCat) {
+        if (cat == true) {
+            JsonParser parser = new JsonParser();
+            JsonObject catResult = parser.parse(catUrl).getAsJsonObject();
+            String catImage = catResult.get("url").getAsString();
+
+            TextView showCountTextView = (TextView) findViewById(R.id.getCat);
+            String countString = showCountTextView.getText().toString();
+            Integer count = Integer.parseInt(countString);
+            count++;
+            showCountTextView.setText(count.toString());
+            getDogOrCatImage();
+            progressTime();
+        } else {
+            endGame = true;
+        }
+        if (endGame == true) {
+            Intent winnerScore = new Intent(this, endGame.class);
+            TextView showCountText = (TextView) findViewById(R.id.get_score);
+            String countStringEnd = showCountText.getText().toString();
+            int endCount = Integer.parseInt(countStringEnd);
+            winnerScore.putExtra(TOTAL_COUNT, endCount);
+            startActivity(winnerScore);
+        }
+    }
+
+    public static final String[] dogAndCatUrl = {dogUrl, catUrl};
+
+    public String getDogOrCatImage() {
+        Random random = new Random();
+        String randomString = dogAndCatUrl[random.nextInt(dogAndCatUrl.length)];
+        if (randomString.equals(catImage)) {
+            cat = true;
+        }
+        if (randomString.equals(dogImage)) {
+            dog = true;
+        }
+        return randomString;
+    }
 
 
     private class ImageDownload extends AsyncTask<String,Void,Bitmap> {
