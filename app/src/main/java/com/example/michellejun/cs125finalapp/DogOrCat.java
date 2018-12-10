@@ -200,7 +200,6 @@ public class DogOrCat extends AppCompatActivity {
         });
         requestQueue.add(jsonArrayRequest);
     }
-    //ask if since the button method is void, if the image will still update
     public void clickDog(View view) {
         if (dog == true) {
             JsonParser parser = new JsonParser();
@@ -253,9 +252,9 @@ public class DogOrCat extends AppCompatActivity {
         }
     }
 
-    public final String[] dogAndCatUrl = {dogImage, catImage};
-
     public String getDogOrCatImage() {
+        final String[] dogAndCatUrl = {dogImage, catImage};
+
         Random random = new Random();
         String randomString = dogAndCatUrl[random.nextInt(dogAndCatUrl.length)];
         if (randomString.equals(catImage)) {
