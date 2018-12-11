@@ -62,8 +62,6 @@ public class DogOrCat extends AppCompatActivity {
     private static String TAG = "puppy";
     private static String TAG1 = "kitty";
     private static RequestQueue requestQueue;
-    static String dogUrl = "https://api.thedogapi.com/v1/images/search?size=med&mime_types=jpg&format=json&has_breeds=true&order=RANDOM&page=0&limit=1";
-    static String catUrl = "https://api.thecatapi.com/v1/images/search";
     ProgressBar progressBar;
     CountDownTimer countDownTimer;
     int i = 0;
@@ -72,6 +70,7 @@ public class DogOrCat extends AppCompatActivity {
     static ImageView imageView;
     static String randomString;
 
+    //code for button handlers and loading image
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestQueue = Volley.newRequestQueue(DogOrCat.this);
@@ -98,6 +97,7 @@ public class DogOrCat extends AppCompatActivity {
         });
     }
 
+    //requesting headers for cat API
     public void requestWithSomeHttpHeaders() {
         RequestQueue queue = Volley.newRequestQueue(this);
         String catUrl = "https://api.thecatapi.com/v1/images/search";
@@ -126,6 +126,7 @@ public class DogOrCat extends AppCompatActivity {
         queue.add(getRequest);
     }
 
+    //requesting headers for dog API
     public void requestWithSomeHttpHeadersTwo() {
         RequestQueue queue = Volley.newRequestQueue(this);
         String dogUrl = "https://api.thedogapi.com/v1/images/search?size=med&mime_types=jpg&format=json&has_breeds=true&order=RANDOM&page=0&limit=1";
@@ -154,6 +155,7 @@ public class DogOrCat extends AppCompatActivity {
         queue.add(getRequest);
     }
 
+    //retrieving dog API
     public static void getDogAPI() {
         final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
@@ -181,6 +183,7 @@ public class DogOrCat extends AppCompatActivity {
         requestQueue.add(jsonArrayRequest);
     }
 
+    //retrieving cat API
     public static void getCatAPI() {
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
@@ -209,6 +212,7 @@ public class DogOrCat extends AppCompatActivity {
         requestQueue.add(jsonArrayRequest);
     }
 
+    //random number generator to generate random dog or cat API call
     public static int randomNumber() {
         Random rand = new Random();
         int x = (Math.random() <= 0.5) ? 1 : 2;
@@ -225,6 +229,7 @@ public class DogOrCat extends AppCompatActivity {
         return x;
     }
 
+    //method for when dog button is clicked
     public void clickDog(View view) {
         if (dog) {
             TextView showCountTextView = (TextView) findViewById(R.id.get_score);
@@ -245,6 +250,7 @@ public class DogOrCat extends AppCompatActivity {
         }
     }
 
+    //method for when cat button is clicked
     public void clickCat(View viewCat) {
         if (cat) {
             TextView showCountTextView = (TextView) findViewById(R.id.get_score);
@@ -265,6 +271,7 @@ public class DogOrCat extends AppCompatActivity {
         }
     }
 
+    //retrieving dog or cat image randomly
     public static String getDogOrCatImage() {
         final String[] dogAndCatUrl = {dogURL, catURL};
 
@@ -279,20 +286,7 @@ public class DogOrCat extends AppCompatActivity {
         return randomString;
     }
 
-    public boolean getDogImage() {
-        DogOrCat.getDogAPI();
-        dog = true;
-        cat = false;
-        return true;
-    }
-
-    public boolean getCatImage() {
-        DogOrCat.getCatAPI();
-        cat = true;
-        dog = false;
-        return true;
-    }
-
+    //Download image
     private static class ImageDownload extends AsyncTask<String,Void,Bitmap> {
         ImageView imageView;
 
@@ -315,6 +309,7 @@ public class DogOrCat extends AppCompatActivity {
         }
     }
 
+    //Progress timer
     public void progressTime() {
         progressBar = (ProgressBar) findViewById(R.id.progress_view);
         progressBar.setProgress(i);
