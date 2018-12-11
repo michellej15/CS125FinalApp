@@ -66,17 +66,20 @@ public class DogOrCat extends AppCompatActivity {
     ProgressBar progressBar;
     CountDownTimer countDownTimer;
     int i = 0;
-    String dogURL;
-    String catURL;
-    ImageView imageView;
+    static String dogURL;
+    static String catURL;
+    static ImageView imageView;
     String randomString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        requestQueue = Volley.newRequestQueue(DogOrCat.this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dog_or_cat);
 
-        imageView = (ImageView) findViewById(R.id.dogCatImage);
+        DogOrCat.getDogAPI();
+        DogOrCat.getCatAPI();
+        imageView = findViewById(R.id.dogCatImage);
         new ImageDownload((ImageView) findViewById(R.id.dogCatImage)).execute(randomString);
         final ProgressBar progressBar = findViewById(R.id.progress_view);
 
@@ -150,7 +153,7 @@ public class DogOrCat extends AppCompatActivity {
         queue.add(getRequest);
     }
 
-    public void getDogAPI() {
+    public static void getDogAPI() {
         final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 "https://api.thedogapi.com/v1/images/search?size=med&mime_types=jpg&format=json&has_breeds=true&order=RANDOM&page=0&limit=1",
@@ -177,7 +180,7 @@ public class DogOrCat extends AppCompatActivity {
         requestQueue.add(jsonArrayRequest);
     }
 
-    public void getCatAPI() {
+    public static void getCatAPI() {
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 "https://api.thecatapi.com/v1/images/search",
@@ -256,7 +259,7 @@ public class DogOrCat extends AppCompatActivity {
             startActivity(winnerScore);
         }
     }
-
+    
     public String getDogOrCatImage() {
         final String[] dogAndCatUrl = {dogURL, catURL};
 
@@ -272,7 +275,7 @@ public class DogOrCat extends AppCompatActivity {
     }
 
 
-    private class ImageDownload extends AsyncTask<String,Void,Bitmap> {
+    private static class ImageDownload extends AsyncTask<String,Void,Bitmap> {
         ImageView imageView;
 
         public ImageDownload(ImageView imageView) {
