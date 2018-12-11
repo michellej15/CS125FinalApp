@@ -46,6 +46,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -54,8 +55,8 @@ import android.os.AsyncTask;
 
 public class DogOrCat extends AppCompatActivity {
 
-    boolean dog = false;
-    boolean cat = false;
+    static boolean dog = false;
+    static boolean cat = false;
     boolean endGame = false;
     private static final String TOTAL_COUNT = "total_count";
     private static String TAG = "puppy";
@@ -69,7 +70,7 @@ public class DogOrCat extends AppCompatActivity {
     static String dogURL;
     static String catURL;
     static ImageView imageView;
-    String randomString;
+    static String randomString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,8 +78,8 @@ public class DogOrCat extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dog_or_cat);
 
-        DogOrCat.getDogAPI();
-        DogOrCat.getCatAPI();
+        getCatImage();
+
         imageView = findViewById(R.id.dogCatImage);
         new ImageDownload((ImageView) findViewById(R.id.dogCatImage)).execute(randomString);
         final ProgressBar progressBar = findViewById(R.id.progress_view);
@@ -209,22 +210,16 @@ public class DogOrCat extends AppCompatActivity {
     }
 
     public void clickDog(View view) {
-        if (dog == true) {
-            /*JsonParser parser = new JsonParser();
-            JsonObject dogResult = parser.parse(dogUrl).getAsJsonObject();
-            dogImage = dogResult.get("url").getAsString();*/
-
-            TextView showCountTextView = (TextView) findViewById(R.id.getDog);
+        if (dog) {
+            TextView showCountTextView = (TextView) findViewById(R.id.get_score);
             String countString = showCountTextView.getText().toString();
             Integer count = Integer.parseInt(countString);
             count++;
             showCountTextView.setText(count.toString());
-            getDogOrCatImage();
-            progressTime();
+            randomNumber();
+            //progressTime();
         } else {
             endGame = true;
-        }
-        if (endGame == true) {
             Intent winnerScore = new Intent(this, end_game.class);
             TextView showCountText = (TextView) findViewById(R.id.get_score);
             String countStringEnd = showCountText.getText().toString();
@@ -235,22 +230,16 @@ public class DogOrCat extends AppCompatActivity {
     }
 
     public void clickCat(View viewCat) {
-        if (cat == true) {
-            /*JsonParser parser = new JsonParser();
-            JsonObject catResult = parser.parse(catUrl).getAsJsonObject();
-            catImage = catResult.get("url").getAsString();*/
-
-            TextView showCountTextView = (TextView) findViewById(R.id.getCat);
+        if (cat) {
+            TextView showCountTextView = (TextView) findViewById(R.id.get_score);
             String countString = showCountTextView.getText().toString();
             Integer count = Integer.parseInt(countString);
             count++;
             showCountTextView.setText(count.toString());
-            getDogOrCatImage();
-            progressTime();
+            randomNumber();
+            //progressTime();
         } else {
             endGame = true;
-        }
-        if (endGame == true) {
             Intent winnerScore = new Intent(this, end_game.class);
             TextView showCountText = (TextView) findViewById(R.id.get_score);
             String countStringEnd = showCountText.getText().toString();
@@ -259,8 +248,8 @@ public class DogOrCat extends AppCompatActivity {
             startActivity(winnerScore);
         }
     }
-    
-    public String getDogOrCatImage() {
+
+    public static String getDogOrCatImage() {
         final String[] dogAndCatUrl = {dogURL, catURL};
 
         Random random = new Random();
@@ -274,6 +263,33 @@ public class DogOrCat extends AppCompatActivity {
         return randomString;
     }
 
+     public static int randomNumber() {
+        Random rand = new Random();
+        int x = rand.nextInt(1);
+        if (x == 0) {
+            DogOrCat.getDogAPI();
+            dog = true;
+        }
+        if (x == 1) {
+            DogOrCat.getCatAPI();
+            cat = true;
+        }
+        return x;
+    }
+
+    public boolean getDogImage() {
+        DogOrCat.getDogAPI();
+        dog = true;
+        cat = false;
+        return true;
+    }
+
+    public boolean getCatImage() {
+        DogOrCat.getCatAPI();
+        cat = true;
+        dog = false;
+        return true;
+    }
 
     private static class ImageDownload extends AsyncTask<String,Void,Bitmap> {
         ImageView imageView;

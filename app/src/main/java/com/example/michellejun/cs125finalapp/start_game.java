@@ -16,7 +16,7 @@ import android.widget.ImageView;
 import java.io.InputStream;
 import java.net.URL;
 
-public class start_game extends AppCompatActivity{
+public class start_game extends DogOrCat {
     public void clickStart(View view) {
         Intent beginGame = new Intent(this, DogOrCat.class);
         startActivity(beginGame);
