@@ -78,7 +78,7 @@ public class DogOrCat extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dog_or_cat);
 
-        getCatImage();
+        randomNumber();
 
         imageView = findViewById(R.id.dogCatImage);
         new ImageDownload((ImageView) findViewById(R.id.dogCatImage)).execute(randomString);
@@ -209,6 +209,22 @@ public class DogOrCat extends AppCompatActivity {
         requestQueue.add(jsonArrayRequest);
     }
 
+    public static int randomNumber() {
+        Random rand = new Random();
+        int x = (Math.random() <= 0.5) ? 1 : 2;
+        if (x == 1) {
+            DogOrCat.getDogAPI();
+            dog = true;
+            cat = false;
+        }
+        if (x == 2) {
+            DogOrCat.getCatAPI();
+            cat = true;
+            dog = false;
+        }
+        return x;
+    }
+
     public void clickDog(View view) {
         if (dog) {
             TextView showCountTextView = (TextView) findViewById(R.id.get_score);
@@ -217,7 +233,7 @@ public class DogOrCat extends AppCompatActivity {
             count++;
             showCountTextView.setText(count.toString());
             randomNumber();
-            //progressTime();
+            progressTime();
         } else {
             endGame = true;
             Intent winnerScore = new Intent(this, end_game.class);
@@ -237,7 +253,7 @@ public class DogOrCat extends AppCompatActivity {
             count++;
             showCountTextView.setText(count.toString());
             randomNumber();
-            //progressTime();
+            progressTime();
         } else {
             endGame = true;
             Intent winnerScore = new Intent(this, end_game.class);
@@ -261,20 +277,6 @@ public class DogOrCat extends AppCompatActivity {
             dog = true;
         }
         return randomString;
-    }
-
-     public static int randomNumber() {
-        Random rand = new Random();
-        int x = rand.nextInt(1);
-        if (x == 0) {
-            DogOrCat.getDogAPI();
-            dog = true;
-        }
-        if (x == 1) {
-            DogOrCat.getCatAPI();
-            cat = true;
-        }
-        return x;
     }
 
     public boolean getDogImage() {
@@ -316,17 +318,22 @@ public class DogOrCat extends AppCompatActivity {
     public void progressTime() {
         progressBar = (ProgressBar) findViewById(R.id.progress_view);
         progressBar.setProgress(i);
-            countDownTimer = new CountDownTimer(3000, 1000) {
+            countDownTimer = new CountDownTimer(30000, 1000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
                     i++;
-                    progressBar.setProgress((int)i * 100 / (3000 / 1000));
+                    progressBar.setProgress((int)i * 100 / (30000 / 1000));
                 }
 
                 @Override
                 public void onFinish() {
-                    finish();
                     endGame = true;
+                    Intent gameOver = new Intent(DogOrCat.this, end_game.class);
+                    TextView showCountText = (TextView) findViewById(R.id.get_score);
+                    String countStringEnd = showCountText.getText().toString();
+                    int endCount = Integer.parseInt(countStringEnd);
+                    gameOver.putExtra(TOTAL_COUNT, endCount);
+                    startActivity(gameOver);
                 }
             };
             countDownTimer.start();
