@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.os.CountDownTimer;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -38,6 +39,7 @@ import com.google.gson.JsonParser;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -48,8 +50,10 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import java.util.Timer;
 
 import android.os.AsyncTask;
 
@@ -62,13 +66,17 @@ public class DogOrCat extends AppCompatActivity {
     private static String TAG = "puppy";
     private static String TAG1 = "kitty";
     private static RequestQueue requestQueue;
-    ProgressBar progressBar;
-    CountDownTimer countDownTimer;
     int i = 0;
     static String dogURL;
     static String catURL;
     static ImageView imageView;
     static String randomString;
+    private TextView countDownText;
+    private CountDownTimer countDownTimer;
+    private long timeLeft;
+    private boolean timerRunning;
+    private static final long COUNTDOWN = 30000;
+
 
     //code for button handlers and loading image
     @Override
@@ -81,7 +89,7 @@ public class DogOrCat extends AppCompatActivity {
 
         imageView = findViewById(R.id.dogCatImage);
         new ImageDownload((ImageView) findViewById(R.id.dogCatImage)).execute(randomString);
-        final ProgressBar progressBar = findViewById(R.id.progress_view);
+        countDownText = findViewById(R.id.count_down);
 
         final Button dogButton = findViewById(R.id.getDog);
         final Button catButton = findViewById(R.id.getCat);
@@ -238,7 +246,8 @@ public class DogOrCat extends AppCompatActivity {
             count++;
             showCountTextView.setText(count.toString());
             randomNumber();
-            progressTime();
+            timeLeft = COUNTDOWN;
+            startCountDown();
         } else {
             endGame = true;
             Intent winnerScore = new Intent(this, end_game.class);
@@ -247,6 +256,7 @@ public class DogOrCat extends AppCompatActivity {
             int endCount = Integer.parseInt(countStringEnd);
             winnerScore.putExtra(TOTAL_COUNT, endCount);
             startActivity(winnerScore);
+            countDownTimer.cancel();
         }
     }
 
@@ -259,7 +269,8 @@ public class DogOrCat extends AppCompatActivity {
             count++;
             showCountTextView.setText(count.toString());
             randomNumber();
-            progressTime();
+            timeLeft = COUNTDOWN;
+            startCountDown();
         } else {
             endGame = true;
             Intent winnerScore = new Intent(this, end_game.class);
@@ -268,6 +279,40 @@ public class DogOrCat extends AppCompatActivity {
             int endCount = Integer.parseInt(countStringEnd);
             winnerScore.putExtra(TOTAL_COUNT, endCount);
             startActivity(winnerScore);
+            countDownTimer.cancel();
+        }
+    }
+
+    public void startCountDown() {
+        countDownTimer = new CountDownTimer(timeLeft, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                timeLeft = millisUntilFinished;
+                updateCountDownText();
+            }
+
+            @Override
+            public void onFinish() {
+                timeLeft = 0;
+                updateCountDownText();
+            }
+        }.start();
+    }
+
+    private void updateCountDownText() {
+        int minutes = (int) (timeLeft / 1000) / 60;
+        int seconds = (int) (timeLeft / 1000) % 60;
+
+        String timeFormatted = String.format(Locale.getDefault(), "%02d:02d", minutes, seconds);
+
+        countDownText.setText(timeFormatted);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
         }
     }
 
@@ -309,28 +354,35 @@ public class DogOrCat extends AppCompatActivity {
         }
     }
 
-    //Progress timer
-    public void progressTime() {
-        progressBar = (ProgressBar) findViewById(R.id.progress_view);
-        progressBar.setProgress(i);
-            countDownTimer = new CountDownTimer(30000, 1000) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    i++;
-                    progressBar.setProgress((int)i * 100 / (30000 / 1000));
-                }
 
-                @Override
-                public void onFinish() {
-                    endGame = true;
-                    Intent gameOver = new Intent(DogOrCat.this, end_game.class);
-                    TextView showCountText = (TextView) findViewById(R.id.get_score);
-                    String countStringEnd = showCountText.getText().toString();
-                    int endCount = Integer.parseInt(countStringEnd);
-                    gameOver.putExtra(TOTAL_COUNT, endCount);
-                    startActivity(gameOver);
-                }
-            };
-            countDownTimer.start();
+    //ProgressBar progressBar;
+
+    //Progress timer
+    /*public void progressTime() {
+        progressBar = findViewById(R.id.progress_view);
+        progressBar.setProgress(i);
+        countDownTimer = new CountDownTimer(3000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                int progress = (int) (millisUntilFinished / 1000);
+                progressBar.setProgress(progressBar.getMax() - progress);
+            }
+            @Override
+            public void onFinish() {
+                gameEnded();
+            }
+        };
+        countDownTimer.start();
     }
+
+    public void gameEnded() {
+        endGame = true;
+        Intent winnerScore = new Intent(this, end_game.class);
+        TextView showCountText = (TextView) findViewById(R.id.get_score);
+        String countStringEnd = showCountText.getText().toString();
+        int endCount = Integer.parseInt(countStringEnd);
+        winnerScore.putExtra(TOTAL_COUNT, endCount);
+        startActivity(winnerScore);
+    }*/
+
 }

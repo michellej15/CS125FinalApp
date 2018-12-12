@@ -20,13 +20,23 @@
         android:id="@+id/get_endGame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="GAME OVER!"
-        android:textSize="36sp" />
+        android:textSize="36sp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/get_points"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="number" />
+        android:gravity="center"
+        android:inputType="number"
+        android:textSize="30sp" />
+
+    <Button
+        android:id="@+id/mainPage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="NEW GAME" />
 </LinearLayout>
