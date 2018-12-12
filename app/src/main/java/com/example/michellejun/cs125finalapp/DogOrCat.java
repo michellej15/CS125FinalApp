@@ -73,9 +73,7 @@ public class DogOrCat extends AppCompatActivity {
     static String randomString;
     private TextView countDownText;
     private CountDownTimer countDownTimer;
-    private long timeLeft;
-    private boolean timerRunning;
-    private static final long COUNTDOWN = 30000;
+    ProgressBar progressBar;
 
 
     //code for button handlers and loading image
@@ -86,10 +84,11 @@ public class DogOrCat extends AppCompatActivity {
         setContentView(R.layout.activity_dog_or_cat);
 
         randomNumber();
+        progressTime();
 
         imageView = findViewById(R.id.dogCatImage);
         new ImageDownload((ImageView) findViewById(R.id.dogCatImage)).execute(randomString);
-        countDownText = findViewById(R.id.count_down);
+        progressBar = findViewById(R.id.progress_view);
 
         final Button dogButton = findViewById(R.id.getDog);
         final Button catButton = findViewById(R.id.getCat);
@@ -221,7 +220,7 @@ public class DogOrCat extends AppCompatActivity {
     }
 
     //random number generator to generate random dog or cat API call
-    public static int randomNumber() {
+    public int randomNumber() {
         Random rand = new Random();
         int x = (Math.random() <= 0.5) ? 1 : 2;
         if (x == 1) {
@@ -246,8 +245,6 @@ public class DogOrCat extends AppCompatActivity {
             count++;
             showCountTextView.setText(count.toString());
             randomNumber();
-            timeLeft = COUNTDOWN;
-            startCountDown();
         } else {
             endGame = true;
             Intent winnerScore = new Intent(this, end_game.class);
@@ -256,7 +253,6 @@ public class DogOrCat extends AppCompatActivity {
             int endCount = Integer.parseInt(countStringEnd);
             winnerScore.putExtra(TOTAL_COUNT, endCount);
             startActivity(winnerScore);
-            countDownTimer.cancel();
         }
     }
 
@@ -269,8 +265,6 @@ public class DogOrCat extends AppCompatActivity {
             count++;
             showCountTextView.setText(count.toString());
             randomNumber();
-            timeLeft = COUNTDOWN;
-            startCountDown();
         } else {
             endGame = true;
             Intent winnerScore = new Intent(this, end_game.class);
@@ -279,40 +273,6 @@ public class DogOrCat extends AppCompatActivity {
             int endCount = Integer.parseInt(countStringEnd);
             winnerScore.putExtra(TOTAL_COUNT, endCount);
             startActivity(winnerScore);
-            countDownTimer.cancel();
-        }
-    }
-
-    public void startCountDown() {
-        countDownTimer = new CountDownTimer(timeLeft, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                timeLeft = millisUntilFinished;
-                updateCountDownText();
-            }
-
-            @Override
-            public void onFinish() {
-                timeLeft = 0;
-                updateCountDownText();
-            }
-        }.start();
-    }
-
-    private void updateCountDownText() {
-        int minutes = (int) (timeLeft / 1000) / 60;
-        int seconds = (int) (timeLeft / 1000) % 60;
-
-        String timeFormatted = String.format(Locale.getDefault(), "%02d:02d", minutes, seconds);
-
-        countDownText.setText(timeFormatted);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
         }
     }
 
@@ -354,18 +314,15 @@ public class DogOrCat extends AppCompatActivity {
         }
     }
 
-
-    //ProgressBar progressBar;
-
     //Progress timer
-    /*public void progressTime() {
+    public void progressTime() {
         progressBar = findViewById(R.id.progress_view);
         progressBar.setProgress(i);
-        countDownTimer = new CountDownTimer(3000, 1000) {
+        countDownTimer = new CountDownTimer(50000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                int progress = (int) (millisUntilFinished / 1000);
-                progressBar.setProgress(progressBar.getMax() - progress);
+                i++;
+                progressBar.setProgress((int)i * 100 / (50000/ 1000));
             }
             @Override
             public void onFinish() {
@@ -383,6 +340,6 @@ public class DogOrCat extends AppCompatActivity {
         int endCount = Integer.parseInt(countStringEnd);
         winnerScore.putExtra(TOTAL_COUNT, endCount);
         startActivity(winnerScore);
-    }*/
+    }
 
 }
